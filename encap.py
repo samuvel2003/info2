@@ -17,4 +17,3 @@ class Ejemplo:
 persona_1 = Ejemplo()
 persona_1.getNombre()
 persona_1.getApellido()
-m 
