@@ -52,7 +52,7 @@ class Medico(Empleado_Hospital):
         self.__especialidad = especialidad
     def verEspecialidad(self):
         return self.__especialidad
-        
+
 
 p1 = Paciente()
 p2 = Paciente()
@@ -60,6 +60,19 @@ p1.asignarNombre("samuel")
 p1.asignarCedula("1004")
 p1.asignarGenero("macho")
 print(p1.verGenero())
+
+m1 = Medico()
+m1.asignarNombre("pacho")
+m1.asignarCedula(1234)
+m1.asignarGenero("macho")
+m1.asignarEspecialidad("neurologo")
+print(m1.verCedula())
+print(m1.verNombre())
+print(m1.verGenero())
+print(m1.verEspecialidad())
+
+
+
 
                 
         
