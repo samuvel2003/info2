@@ -1,8 +1,8 @@
 class Ejemplo:
 
     def _init_( self ):
-        self.__nombre = "Josue"
-        self.__apellido = "Paniagua"
+        self.__nombre = "samuel"
+        self.__apellido = "velasquez"
         self.__edad = "19"
 
     def getNombre( self ):
