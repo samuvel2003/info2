@@ -26,12 +26,12 @@ class Person:
         return self.__genero
     
     def guardarInfo( self ):
-        return self._nombre, self.cedula, self._genero
+        return self.__nombre, self.__cedula, self.__genero
 
 
 class Paciente( Person ):
 
-    def _init_( self ):
+    def __init__( self ):
         super()._init_() # hace alucion al constructor de la clase padre, sin embargo se puede poner o no 
         self.__servicio = ""
 
@@ -83,16 +83,16 @@ class Medico( Empleado_Hospital ):
 
 class Sistema( Person ):
     
-    def _init_(self):
+    def __init__(self):
         self.__lista_pacientes = []
         self.__lista_nombre = []
         self.__lista_cedula = []
         self.__lista_genero = []
-        self.__diccionario_pacientes = {  }
+        self.__diccionario_pacientes = {}
 
     def numeroDePacientes( self ):
-        self._numero_pacientes = len( self._lista_pacientes )
-        return self.__numero_pacientes
+        self.__numero_pacientes = len( self.__lista_pacientes )
+        return print( self.__numero_pacientes )
     
     def ingresarPaciente( self, rol ):
         p = Paciente() 
@@ -104,26 +104,49 @@ class Sistema( Person ):
         self.__lista_nombre.append( p.getName() )
         self.__lista_cedula.append( p.getCedula() )
         self.__lista_genero.append( p.getGenero() )
-        self._diccionario_pacientes.update( {'Nombre' : self.lista_nombre, 'Cedula' : self.lista_cedula, 'Genero' : self._lista_genero} )
-
-        print( self.__lista_pacientes )
-        print( self.numeroDePacientes() )
+        self.__diccionario_pacientes.update( {'Nombre' : self.__lista_nombre, 'Cedula' : self.__lista_cedula, 'Genero' : self.__lista_genero} )
+        #print( self.__diccionario_pacientes )
+        #print( self.__lista_pacientes )
+        #print( self.numeroDePacientes() )
 
     def verDatosPacientesLista( self ):
-        cedula = input( 'Ingrese la cedula del paciente que quiere ingresar en la lista: ' )
+        cedula = input( 'Ingrese la cedula del paciente que quiere buscar en la lista: ' )
         for c in self.__lista_pacientes:
             if cedula == c[1]:
                 return print(c)
 
     def verDatosPacientesDiccionario( self ):
         cedula = input( "Ingresar la cedula del pacientes que busca en el diccionario: " )
-        for p, c in enumerate( self.__diccionario_pacientes ):
-            if cedula == c
+        for p, c in enumerate( self.__diccionario_pacientes['Cedula'] ):  # ENUMERATE
+            if cedula == c:
+                print( f"Nombre: { self.__diccionario_pacientes['Nombre'][p] }, cedula : {self.__diccionario_pacientes['Cedula'][p]}, Genero: {self.__diccionario_pacientes['Genero'][p]}" )
+                
 
-"""
-Un ejemplo para correr el codigo seria el siguiente
-"""
+################# Funcion enumerate con el for ##############
+
+######################## FUNCIO MAIN ########################
 
 
-paciente_1 = Sistema()
-paciente_1.ingresarPaciente( "Paciente" )
+def main():
+
+    p = Sistema()
+
+    while True:
+        opcion = int( input( """
+        1- Ingresar paciente
+        2- Ver datos del paciente
+        3- Ver el numero de pacientes
+        4- Salir
+        > """ ) )
+
+        if opcion == 1:
+            p.ingresarPaciente( "Paciente" )
+        elif opcion == 2:
+            p.verDatosPacientesDiccionario()
+        elif opcion == 3:
+            p.numeroDePacientes()
+        elif opcion == 4:
+            break
+
+if __name__ == '__main__':
+    main()
