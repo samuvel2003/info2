@@ -17,6 +17,16 @@ x = mycol.insert_one(mydict_client)
 print(x.inserted_id)
 print(y.inserted_id)
 
-#for x in mycol.find({ "nombre": 0}):
+for x in mycol.find({ "nombre": 0}):
+    print(x)
 
-    #print(x)
+for y in myprov.find():
+    print(y)
+
+myquery = {"nombre": "juan", "direccion": "C/Mayor 1"}
+newvalues = { "$set": {"nombre": "camilo"}}
+
+mycol.update_one(myquery,newvalues)
+#print "clientes" despues del update:
+for x in mycol.find():
+    print(x)
