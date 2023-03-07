@@ -2,12 +2,14 @@
 import pymongo
 
 class Medicamento:
-    def __init__(self):
-        #self.__medicamentos = mydb["medicamentos"]
+    def __init__(self,client):
+        mydb = client["sistVete"]
+        self.__medicamentos = mydb["medicamentos"]
         self.__nombre = ""
         self.__dosis = 0
     
     def verNombre(self):
+        nombre = list(self.self)
         return self.__nombre
     def verDosis(self):
         return self.__dosis
@@ -19,6 +21,7 @@ class Medicamento:
     
 class Mascota:
     def __init__(self):
+        self.__mascota = ""
         self.__nombre = ""
         self.__tipo = ""
         self.__num_historia = 0
@@ -120,12 +123,8 @@ def main():
     client = pymongo.MongoClient("mongodb+srv://samuelra2003:2003@cluster0.pmzsboi.mongodb.net/?retryWrites=true&w=majority")
     db = client.test
 
-    mydb = client["sistVete"]
-
-    
-
     #creamos el sistema
-    sistema = Sistema()
+    sistema = Sistema(client)
     while True:
         opcion = ingresoNumerico(" 0- Salir\n 1- Ingresar mascota\n 2- Eliminar\n 3- ver Fecha Ingreso\n 4- ver lista medicamentos\n 5- ver numero de mascotas\n ")
         if opcion == 0:
@@ -181,12 +180,12 @@ def main():
             for i in range(0,nm):
                 nombre_medicamentos = input("Ingrese el nombre: ")
                 dosis = ingresoNumerico("Ingrese la dosis: ")
-                medicamento = Medicamento()
+                medicamento = Medicamento(client)
                 medicamento.asignarDosis(dosis)
                 medicamento.asignarNombre(nombre_medicamentos)
                 lista_medicamentos.append(medicamento)
             #5. crear la mascota y asignarle la informacion
-            mascota = Mascota()
+            mascota = Mascota(client)
             mascota.asignarHistoria(nhc)
             mascota.asignarNombre(n)
             mascota.asignarTipo(t)
