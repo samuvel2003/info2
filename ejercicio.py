@@ -2,13 +2,10 @@ import pymongo
 
 class Medicamento:
 
-    def _init_(self, client):
+    def __init__(self, client):
         mydb = client["Veterinaria"]
         self.__medicamentos = mydb[ "Medicamentos" ]
 
-    # los metodos para VER resultan innecesarios
-
-    # metodos de asignar 
     def asignarNombreMed( self, nombreMed ):
         medicamento = { "Nombre medicamento": nombreMed }
         self.__medicamentos.insert_one( medicamento )
@@ -26,14 +23,11 @@ class Medicamento:
 
 class Mascota:
 
-    def _init_( self, client, historia ):
+    def __init__( self, client, historia ):
         mydb = client["Veterinaria"]
         self.__mascota = mydb[ "Mascota" ]
         self.__historia = historia
 
-    
-
-    # Metodos de asignar
     def asignarNomMascota(self,nombre):
         numHisto = {"Historia": self.__historia}
         lista = {"$set": { "Nombre": nombre }}
@@ -66,7 +60,7 @@ class Mascota:
 
 class Sistema:
 
-    def _init_( self, client ):
+    def __init__( self, client ):
         mydb = client["Veterinaria"]
         self.__mascota = mydb[ "Mascota" ]
         self.__medicamentos = mydb[ "Medicamentos" ]
@@ -78,7 +72,7 @@ class Sistema:
         for eliminar in lista2:
             self.__medicamentos.delete_one(eliminar)
 
-    def SistemaVerMedicamento(self, histoClinica): # que se esta aministrando a una mascota
+    def SistemaVerMedicamento(self, histoClinica): 
         medicamentos = list(self.__medicamentos.find( { "Historia": histoClinica }))
         for medicamento in medicamentos:
             print(f" Nombre medicamneto:{medicamento['Nombre medicamento']}, Dosis: { medicamento['Dosis'] }")
@@ -93,23 +87,23 @@ class Sistema:
         lista = list(self.__mascota.find())
         return len(lista)
 
-
-    # ALGUNOS METODOS ADICIONALES PARA QUE EL CODIGO SEA MAS FUNCIONAL
-
     def verificarMascotaSist(self,histoClinica):
         ver = list(self.__mascota.find( { "Historia": histoClinica }))
         if len(ver) == 0:
             return False
         else: 
             return True 
+#### VALIDACIONES ####
 
-def validarEntero(a):# verificación enteros 
+def validarEntero(a):
     try:
         a = int(a)
         return a
     except:
         b = input("Ingrese un numero entero: ")
         validarEntero(b)
+
+######################
 def main():
     client = pymongo.MongoClient("mongodb+srv://samuelra2003:2003@cluster0.pmzsboi.mongodb.net/?retryWrites=true&w=majority")
     db = client.test
@@ -123,11 +117,11 @@ def main():
         1- INGRESAR UNA MASCOTA
         2- ELIMINAR UNA MASCOTA
         3- VER FECHA DE INGRESO DE LA MASCOTA
-        4-  CONSULTAR MEDICAMENTOS DE UNA MASCOTA
+        4- CONSULTAR MEDICAMENTOS DE UNA MASCOTA
         5- VER NUMERO DE MASCOTAS EN SERVICIO 
-        """)
+        Ingrese el numero correspondiente a su selección: """)
 
-        if opc=='0':
+        if opc == '0':
             print("Fin del programa...")
             break
 
@@ -174,7 +168,7 @@ def main():
             sistema.SistemaEliminarMascota(numHistoria)
             print("Mascota eliminada...")
         
-        elif opc == '3': # FECHA DE INGRESO DE LA MASCOTA
+        elif opc == '3': 
             
             numHistoria = validarEntero(input("Ingrese el numero de la historia clinica que desea ver la fecha de ingreso: "))
             if sistema.verificarMascotaSist(numHistoria) == False:
@@ -184,7 +178,7 @@ def main():
             sistema.SistemaVerFechaIngreso(numHistoria)
 
 
-        elif opc == '4': # VER LISTA DE MEDICAMENTOS (que se esta administrando a una mascota)
+        elif opc == '4': 
             
             numHistoria = validarEntero(input("Numero de historia de la mascota a la que le desea ver los medicamentos: "))
             if sistema.verificarMascotaSist( numHistoria ) == False:
@@ -199,7 +193,7 @@ def main():
             print(sistema.SistemaVerNumeroDeMascotas())
 
         else:
-            print( "Opcion no valida" )
+            print( " Opcion no valida, ingrese el numero CORRESPONDIENTE a su selección!! " )
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     main()
