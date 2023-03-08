@@ -6,9 +6,9 @@ class Medicamento:
         mydb = client["Veterinaria"]
         self.__medicamentos = mydb[ "Medicamentos" ]
 
-    # LOS METODOS DE VER RESULTAN INNECESARIOS, ASI QUE LOS BORRAMOS 
+    # los metodos para VER resultan innecesarios
 
-    # METODOS PARA ASIGNAR
+    # metodos de asignar 
     def asignarNombreMed( self, nombreMed ):
         medicamento = { "Nombre medicamento": nombreMed }
         self.__medicamentos.insert_one( medicamento )
@@ -31,9 +31,9 @@ class Mascota:
         self.__mascota = mydb[ "Mascota" ]
         self.__historia = historia
 
-    # ELIMINAMOS LOS METODOS DE VER YA QUE NO SON NECESARIOS
+    
 
-    # Metodos para asignar
+    # Metodos de asignar
     def asignarNomMascota(self,nombre):
         numHisto = {"Historia": self.__historia}
         lista = {"$set": { "Nombre": nombre }}
@@ -71,145 +71,132 @@ class Sistema:
         self.__mascota = mydb[ "Mascota" ]
         self.__medicamentos = mydb[ "Medicamentos" ]
 
-    def SistemaEliminarMascota( self, numHisCli ):
-        lista = list( self.__mascota.find( { "Historia": numHisCli } ) )
+    def SistemaEliminarMascota(self, histoClinica):
+        lista = list(self.__mascota.find({ "Historia": histoClinica }))
         self.__mascota.delete_one( lista[-1] )
-        lista2 = list( self.__medicamentos.find( { "Historia": numHisCli } ) )
+        lista2 = list(self.__medicamentos.find({"Historia": histoClinica}))
         for eliminar in lista2:
-            self.__medicamentos.delete_one( eliminar )
+            self.__medicamentos.delete_one(eliminar)
 
-    def SistemaVerMedicamento( self, numHisCli ): # que se esta aministrando a una mascota
-        medicamentos = list( self.__medicamentos.find( { "Historia": numHisCli } ) )
+    def SistemaVerMedicamento(self, histoClinica): # que se esta aministrando a una mascota
+        medicamentos = list(self.__medicamentos.find( { "Historia": histoClinica }))
         for medicamento in medicamentos:
-            print( f" Nombre medicamneto: { medicamento['Nombre medicamento'] }, Dosis: { medicamento['Dosis'] } " )
+            print(f" Nombre medicamneto:{medicamento['Nombre medicamento']}, Dosis: { medicamento['Dosis'] }")
             
-    def SistemaVerFechaIngreso( self, numHisCli ):
-        lista = list( self.__mascota.find( { "Historia": numHisCli } ) )
+    def SistemaVerFechaIngreso(self, histoClinica):
+        lista = list(self.__mascota.find( { "Historia": histoClinica }))
         try:
-            print( lista[-1][ "Fecha" ] )
+            print(lista[-1]["Fecha"])
         except:
             print( "No hay ninguna fecha de ingreso registrada con ese numero de historia clinica" )        
-    def SistemaVerNumeroDeMascotas( self ):
-        lista = list( self.__mascota.find() )
-        return len( lista )
-
-    # ESTE METODO SIRVE SI SE QUIERE SALIR POR MEDIO DE ESTE, YO PUSE UN BREAK
-    # def salir( self, bandera ): 
-    #     bandera = False
-    #     return bandera
+    def SistemaVerNumeroDeMascotas(self):
+        lista = list(self.__mascota.find())
+        return len(lista)
 
 
     # ALGUNOS METODOS ADICIONALES PARA QUE EL CODIGO SEA MAS FUNCIONAL
 
-    def SistemaVerificarMascota( self, numHisCli ):
-        lista = list( self.__mascota.find( { "Historia": numHisCli } ) )
-        if len( lista ) == 0:
+    def verificarMascotaSist(self,histoClinica):
+        ver = list(self.__mascota.find( { "Historia": histoClinica }))
+        if len(ver) == 0:
             return False
         else: 
             return True 
 
-######################## METODO VALIDAR INT ################################
-
-def validarInt( a ):
+def validarEntero(a):# verificación enteros 
     try:
-        a = int( a )
+        a = int(a)
         return a
     except:
-        b = input( "Ingrese un numero entero: " )
-        validarInt( b )
-
-############################################################################
-
-
+        b = input("Ingrese un numero entero: ")
+        validarEntero(b)
 def main():
-
     client = pymongo.MongoClient("mongodb+srv://samuelra2003:2003@cluster0.pmzsboi.mongodb.net/?retryWrites=true&w=majority")
     db = client.test
 
-    sistema = Sistema( client )
+    sistema = Sistema(client)
 
     while True:
 
-        opcion = input( """
-        (0) Salir
-        (1) Ingresar mascota
-        (2) Eliminar mascota
-        (3) Fecha de ingreso de la mascota
-        (4) Ver lista de medicamentos
-        (5) Ver numero de mascotas
-        > """ )
+        opc= input("""
+        0- SALIR
+        1- INGRESAR UNA MASCOTA
+        2- ELIMINAR UNA MASCOTA
+        3- VER FECHA DE INGRESO DE LA MASCOTA
+        4-  CONSULTAR MEDICAMENTOS DE UNA MASCOTA
+        5- VER NUMERO DE MASCOTAS EN SERVICIO 
+        """)
 
-        if opcion == '0':
-            print( "Fin del programa..." )
+        if opc=='0':
+            print("Fin del programa...")
             break
 
-        elif opcion == '1': # INGRESAR MASCOTA
-            
+        elif opc == '1': 
             if sistema.SistemaVerNumeroDeMascotas() >= 10:
-                print( "No hay espacio" )
+                print("Capacidad máxima alcanzada,no se pueden ingresar más mascotas")
                 continue
 
-            numHistoria = validarInt( input("Ingrese el numero de la historia clinica de la mascota: ") )
-            if sistema.SistemaVerificarMascota( numHistoria ) ==  True:
-                print( "El numero de historia clinica ya esta registrado" )
+            numHistoria = validarEntero(input("Número de la historia clinica de la mascota a ingresar: "))
+            if sistema.verificarMascotaSist(numHistoria) == True:
+                print("El numero de historia clinica ya esta registrado")
                 continue
                 
-            name = input( "Ingrese el nombre de la mascota: " )
-            type = input( "Ingrese CANINO o FELINO: " )
-            weight = input( "Ingrese el peso de la mascota en Kilogramos: " )
-            date = input( "Ingrese la fecha dd/mm/aaaa: " )
-            med_num = validarInt( input( "Ingrese la cantidad de medicamentos: " ) )
+            nombre = input("Ingrese el nombre de la mascota: ")
+            tipo = input("Ingrese CANINO o FELINO: ")
+            peso = input("Ingrese el peso de la mascota en Kilogramos: ")
+            fecha = input("Ingrese la fecha dd/mm/aaaa: ")
+            numMed = validarEntero(input("Ingrese la cantidad de medicamentos: "))
 
-            for i in range( 0, med_num ):
-                medicamento = Medicamento( client )
-                nombreMedicamento = input( "Ingrese el nombre del medicamento: " )
-                dosis = input( "Ingrese la dosis del medicamento: " )
-                medicamento.asignarNombreMed( nombreMedicamento )
-                medicamento.asignarDosisMed( nombreMedicamento, dosis )
-                medicamento.asignarNumHistoria( nombreMedicamento, numHistoria )
+            for i in range(0, numMed):
+                medicamento = Medicamento(client)
+                nombreMedicamento = input("Ingrese el nombre del medicamento: ")
+                dosis = input("Ingrese la dosis del medicamento: ")
+                medicamento.asignarNombreMed(nombreMedicamento)
+                medicamento.asignarDosisMed(nombreMedicamento, dosis)
+                medicamento.asignarNumHistoria(nombreMedicamento, numHistoria)
             
-            pet = Mascota( client, numHistoria )
-            pet.asignarHistoMascota()
-            pet.asignarNomMascota( name )
-            pet.asignarTipoMascota( type )
-            pet.asignarPesoMascota( weight )
-            pet.asignarIngresoMascota( date )
+            mascota = Mascota(client, numHistoria)
+            mascota.asignarHistoMascota()
+            mascota.asignarNomMascota(nombre)
+            mascota.asignarTipoMascota(tipo)
+            mascota.asignarPesoMascota(peso)
+            mascota.asignarIngresoMascota(fecha)
 
-            print( f"Mascota {name} ingresada..." )
+            print(f"Mascota {nombre} ingresada...")
 
-        elif opcion == '2': # ELIMINAR MASCOTA
+        elif opc == '2':
             
-            numHistoria = validarInt( input( "Ingrese el numero de la historia clinica que desea eliminar: " ) )
-            if sistema.SistemaVerificarMascota( numHistoria ) == False:
-                print( "El numero de la historia clinica ingresado no existe..." )
+            numHistoria = validarEntero(input("Ingrese el numero de la historia clinica que desea eliminar: "))
+            if sistema.verificarMascotaSist(numHistoria) == False:
+                print("El numero de la historia clinica ingresado no existe...")
                 continue
 
-            sistema.SistemaEliminarMascota( numHistoria )
-            print( "Mascota eliminada..." )
+            sistema.SistemaEliminarMascota(numHistoria)
+            print("Mascota eliminada...")
         
-        elif opcion == '3': # FECHA DE INGRESO DE LA MASCOTA
+        elif opc == '3': # FECHA DE INGRESO DE LA MASCOTA
             
-            numHistoria = validarInt( input( "Ingrese el numero de la historia clinica que desea ver la fecha de ingreso: " ) )
-            if sistema.SistemaVerificarMascota( numHistoria ) == False:
-                print( "El numero de la historia clinica ingresado no existe..." )
+            numHistoria = validarEntero(input("Ingrese el numero de la historia clinica que desea ver la fecha de ingreso: "))
+            if sistema.verificarMascotaSist(numHistoria) == False:
+                print("El numero de la historia clinica ingresado no existe...")
                 continue
 
-            sistema.SistemaVerFechaIngreso( numHistoria )
+            sistema.SistemaVerFechaIngreso(numHistoria)
 
 
-        elif opcion == '4': # VER LISTA DE MEDICAMENTOS (que se esta administrando a una mascota)
+        elif opc == '4': # VER LISTA DE MEDICAMENTOS (que se esta administrando a una mascota)
             
-            numHistoria = validarInt( input( "Numero de historia de la mascota a la que le desea ver los medicamentos: " ) )
-            if sistema.SistemaVerificarMascota( numHistoria ) == False:
-                print( "El numero de la historia clinica ingresado no existe..." )
+            numHistoria = validarEntero(input("Numero de historia de la mascota a la que le desea ver los medicamentos: "))
+            if sistema.verificarMascotaSist( numHistoria ) == False:
+                print("El numero de la historia clinica ingresado no existe...")
                 continue
 
-            sistema.SistemaVerMedicamento( numHistoria )
+            sistema.SistemaVerMedicamento(numHistoria)
             
 
-        elif opcion == '5': # VER NUMERO DE MASCOTAS
+        elif opc == '5':
         
-            print( sistema.SistemaVerNumeroDeMascotas() )
+            print(sistema.SistemaVerNumeroDeMascotas())
 
         else:
             print( "Opcion no valida" )
